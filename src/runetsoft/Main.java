@@ -22,7 +22,8 @@ public class Main {
       port = DEFAULT_PORT;
     }
     LOG.log(Level.INFO, "Listening port : " + port);
-    ServerSocket socket = new ServerSocket(port);
+    final ServerSocket socket = new ServerSocket(port);
+    final WialonIPSParser parser = new WialonIPSParser();
     while (!Thread.currentThread().isInterrupted()) {
       final Socket client = socket.accept();
       new Thread(new Runnable() {
@@ -38,6 +39,10 @@ public class Main {
             }
             String msg = new String(out.toByteArray(), StandardCharsets.UTF_8);
             LOG.log(Level.INFO, "Message received : " + msg);
+            String reply = parser.apply(msg);
+            if (reply != null) {
+              client.getOutputStream().write(reply.getBytes(StandardCharsets.UTF_8));
+            }
             client.close();
           } catch (IOException e) {
             throw new RuntimeException(e);
