@@ -26,22 +26,20 @@ public class Main {
     final WialonIPSParser parser = new WialonIPSParser();
     while (!Thread.currentThread().isInterrupted()) {
       final Socket client = socket.accept();
+      System.out.println("ACCEPTED!");
       new Thread(new Runnable() {
         @Override
         public void run() {
           try {
             InputStream in = client.getInputStream();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buff = new byte[256];
-            int read;
-            while ((read = in.read(buff)) != -1) {
-              out.write(buff, 0, read);
-            }
-            String msg = new String(out.toByteArray(), StandardCharsets.UTF_8);
-            LOG.log(Level.INFO, "Message received : " + msg);
-            String reply = parser.apply(msg);
-            if (reply != null) {
-              client.getOutputStream().write(reply.getBytes(StandardCharsets.UTF_8));
+            String msg = readMessage(in);
+            while (msg != null) {
+              LOG.log(Level.INFO, "Message received : " + msg);
+              String reply = parser.apply(msg);
+              if (reply != null) {
+                client.getOutputStream().write(reply.getBytes(StandardCharsets.UTF_8));
+              }
+              msg = readMessage(in);
             }
             client.close();
           } catch (IOException e) {
@@ -50,5 +48,19 @@ public class Main {
         }
       }).start();
     }
+  }
+
+  private static String readMessage(InputStream in) throws IOException {
+    byte[] buff = new byte[8];
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    int numRead;
+    while ((numRead = in.read(buff)) != -1) {
+      out.write(buff, 0, numRead);
+      String msg = new String(out.toByteArray(), StandardCharsets.UTF_8);
+      if (msg.endsWith("\r\n")) {
+        return msg;
+      }
+    }
+    return null;
   }
 }

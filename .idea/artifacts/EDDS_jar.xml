@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="EDDS:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/EDDS_jar</output-path>
-    <root id="archive" name="EDDS.jar">
-      <element id="module-output" name="EDDS" />
-    </root>
-  </artifact>
-</component>

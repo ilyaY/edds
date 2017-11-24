@@ -21,7 +21,7 @@ public class TestClient {
 
   private static void runTestClient(int i) {
     try {
-      Socket client = new Socket("127.0.0.1", DEFAULT_PORT);
+      Socket client = new Socket("192.168.0.54", DEFAULT_PORT);
       byte[] bytes = ("test-" + i).getBytes(StandardCharsets.UTF_8);
       client.getOutputStream().write(bytes);
       client.close();
