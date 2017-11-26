@@ -1,5 +1,7 @@
 package runetsoft;
 
+import runetsoft.persistence.DBWriter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,19 +13,27 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("Convert2Lambda")
 public class Main {
-  static final int DEFAULT_PORT = 8089;
-  private static final Logger LOG = Logger.getLogger("EDDS");
+  private static final int DEFAULT_PORT = 8089;
+  private static final String DEFAULT_DB_URL = "jdbc:h2:mem:test";
+  public static final Logger LOG = Logger.getLogger("EDDS");
 
   public static void main(String[] args) throws Exception {
     int port;
+    String dbUrl, dbUsername, dbPassword;
     if (args != null && args.length > 0) {
       port = Integer.parseInt(args[0]);
+      dbUrl = args[1];
+      dbUsername = args[2];
+      dbPassword = args[3];
     } else {
       port = DEFAULT_PORT;
+      dbUrl = DEFAULT_DB_URL;
+      dbUsername = null;
+      dbPassword = null;
     }
     LOG.log(Level.INFO, "Listening port : " + port);
     final ServerSocket socket = new ServerSocket(port);
-    final WialonIPSParser parser = new WialonIPSParser();
+    final DBWriter writer = new DBWriter(dbUrl, dbUsername, dbPassword);
     while (!Thread.currentThread().isInterrupted()) {
       final Socket client = socket.accept();
       System.out.println("ACCEPTED!");
@@ -31,13 +41,15 @@ public class Main {
         @Override
         public void run() {
           try {
+            final MessageProcessor processor = new MessageProcessor(writer);
             InputStream in = client.getInputStream();
             String msg = readMessage(in);
             while (msg != null) {
               LOG.log(Level.INFO, "Message received : " + msg);
-              String reply = parser.apply(msg);
+              String reply = processor.process(msg);
               if (reply != null) {
                 client.getOutputStream().write(reply.getBytes(StandardCharsets.UTF_8));
+                client.getOutputStream().flush();
               }
               msg = readMessage(in);
             }
