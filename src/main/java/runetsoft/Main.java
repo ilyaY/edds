@@ -20,7 +20,7 @@ public class Main {
   public static void main(String[] args) throws Exception {
     int port;
     String dbUrl, dbUsername, dbPassword;
-    if (args != null && args.length > 0) {
+    if (args != null && args.length >= 4) {
       port = Integer.parseInt(args[0]);
       dbUrl = args[1];
       dbUsername = args[2];
