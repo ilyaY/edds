@@ -45,8 +45,8 @@ public class Main {
             InputStream in = client.getInputStream();
             String msg = readMessage(in);
             while (msg != null) {
-              LOG.log(Level.INFO, "Message received : " + msg);
               String reply = processor.process(msg);
+              LOG.log(Level.INFO, "Message : " + msg + "\nReply : " + reply);
               if (reply != null) {
                 client.getOutputStream().write(reply.getBytes(StandardCharsets.UTF_8));
                 client.getOutputStream().flush();
