@@ -14,22 +14,21 @@ import java.util.logging.Logger;
 @SuppressWarnings("Convert2Lambda")
 public class Main {
   private static final int DEFAULT_PORT = 20332;
-  private static final String DEFAULT_DB_URL = "jdbc:h2:mem:test";
   public static final Logger LOG = Logger.getLogger("EDDS");
 
   public static void main(String[] args) throws Exception {
+    if (args == null || args.length != 1) {
+      System.out.println("Usage : java -jar EDDS.jar [db_connection_url]");
+      System.exit(1);
+    }
+
     try {
       Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
     } catch (ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
 
-    String dbUrl;
-    if (args != null && args.length > 0) {
-      dbUrl = args[0];
-    } else {
-      dbUrl = DEFAULT_DB_URL;
-    }
+    String dbUrl = args[0];
     LOG.log(Level.INFO, "Listening port : " + DEFAULT_PORT);
     final ServerSocket socket = new ServerSocket(DEFAULT_PORT);
     final DBWriter writer = new DBWriter(dbUrl);
