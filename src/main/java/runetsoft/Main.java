@@ -18,6 +18,12 @@ public class Main {
   public static final Logger LOG = Logger.getLogger("EDDS");
 
   public static void main(String[] args) throws Exception {
+    try {
+      Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+
     int port;
     String dbUrl, dbUsername, dbPassword;
     if (args != null && args.length >= 4) {
