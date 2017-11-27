@@ -8,9 +8,9 @@ public class DataEntry {
 
   DataEntry(String[] params) {
     if (params[0].length() == 6 && params[1].length() == 6) {
-      String date = "20" + params[0].substring(4) + "-" + params[0].substring(2, 4) + "-" + params[0].substring(0, 2);
+      String date = "20" + params[0].substring(4) + "-" + params[0].substring(0, 2) + "-" + params[0].substring(2, 4);
       String time = params[1].substring(0, 2) + ":" + params[1].substring(2, 4) + ":" + params[1].substring(4);
-      timestamp = "\"" + date + " " + time + "\"";
+      timestamp = "'" + date + " " + time + "'";
     } else {
       timestamp = "NOW()";
     }

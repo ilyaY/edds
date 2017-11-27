@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("Convert2Lambda")
 public class Main {
-  private static final int DEFAULT_PORT = 8089;
+  private static final int DEFAULT_PORT = 20332;
   private static final String DEFAULT_DB_URL = "jdbc:h2:mem:test";
   public static final Logger LOG = Logger.getLogger("EDDS");
 
@@ -24,22 +24,15 @@ public class Main {
       throw new RuntimeException(e);
     }
 
-    int port;
-    String dbUrl, dbUsername, dbPassword;
-    if (args != null && args.length >= 4) {
-      port = Integer.parseInt(args[0]);
-      dbUrl = args[1];
-      dbUsername = args[2];
-      dbPassword = args[3];
+    String dbUrl;
+    if (args != null && args.length > 0) {
+      dbUrl = args[0];
     } else {
-      port = DEFAULT_PORT;
       dbUrl = DEFAULT_DB_URL;
-      dbUsername = null;
-      dbPassword = null;
     }
-    LOG.log(Level.INFO, "Listening port : " + port);
-    final ServerSocket socket = new ServerSocket(port);
-    final DBWriter writer = new DBWriter(dbUrl, dbUsername, dbPassword);
+    LOG.log(Level.INFO, "Listening port : " + DEFAULT_PORT);
+    final ServerSocket socket = new ServerSocket(DEFAULT_PORT);
+    final DBWriter writer = new DBWriter(dbUrl);
     while (!Thread.currentThread().isInterrupted()) {
       final Socket client = socket.accept();
       System.out.println("ACCEPTED!");
